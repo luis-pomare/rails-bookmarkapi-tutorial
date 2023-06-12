@@ -1,5 +1,6 @@
 class BookmarksController < ApplicationController
   before_action :set_bookmark, only: %i[ show update destroy ]
+  before_action :authenticate_user
 
   # GET /bookmarks
   def index
@@ -47,5 +48,17 @@ class BookmarksController < ApplicationController
     # Only allow a list of trusted parameters through.
     def bookmark_params
       params.require(:bookmark).permit(:title, :url)
+    end
+
+    private
+    def authenticate_user
+      # find the user based on the headers from HTTP request
+      @current_user = User.find_by(
+        username: request.headers['X-Username'],
+        authentication_token: request.headers['X-Token']
+      )
+      
+      # return error message with 403 HTTP status if there's no such user
+      return render(json: { message: 'Invalid User' }, status: 403) unless @current_user
     end
 end
