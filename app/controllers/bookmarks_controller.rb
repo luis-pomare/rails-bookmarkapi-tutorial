@@ -50,7 +50,6 @@ class BookmarksController < ApplicationController
       params.require(:bookmark).permit(:title, :url)
     end
 
-    private
     def authenticate_user
       # find the user based on the headers from HTTP request
       @current_user = User.find_by(
